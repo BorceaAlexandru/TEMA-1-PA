@@ -78,3 +78,54 @@ void freeMem(struct Team* head)
         free(aux); //eliberez mem pt struct echipei
     }
 }
+
+//functii pentru task2
+
+//creazaEchipa modificat
+struct Team* creazaEchipa(char* name, int punctajTotal, struct Team* head)
+{
+    struct Team* newTeam=(struct Team*)malloc(sizeof (struct Team));
+    newTeam->name=name;
+    newTeam->punctajTotal=punctajTotal;
+    newTeam->next=head;
+    return newTeam;
+}
+
+//putere 2
+int putereDoi(int n)
+{
+    if(n<1) return 0;
+    return (n&(n-1))==0;
+}
+
+//elimina echipa
+void eliminaEchipa(struct Team** head, int n)
+{
+    while(n<1 || (n & (n-1))!=0) //verific daca n e putere a lui 2
+    {
+        struct Team* cur=*head;
+        struct Team* prev=NULL;
+        struct Team* minPrev=NULL;
+        struct Team* minTeam=cur;
+
+        while(cur!=NULL)
+        {
+            if(cur->punctajTotal < minTeam->punctajTotal)
+            {
+                minPrev=prev;
+                minTeam=cur;
+            }
+            prev=cur;
+            cur=cur->next;
+        }
+
+        if(minPrev==NULL)
+            *head=(*head)->next;
+        else
+            minPrev->next=minTeam->next;
+
+        free(minTeam->name);
+        free(minTeam);
+        n--;
+    }
+}

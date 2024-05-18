@@ -31,7 +31,7 @@ int main(int argc, char** argv){
     else{
         printf("Se rezolva cazul:%d ", task);
         switch(task){
-            case 1:
+            case 1:{
                 int nrEchipe, nrPlayeri;
     fscanf(fisier_input, "%d", &nrEchipe);
 
@@ -68,11 +68,50 @@ int main(int argc, char** argv){
     fclose(fisier_output);
     fclose(verificare_task);
 
-        break;
+        break;}
 
-            case 2:
-            printf("2");
-            break;
+            //cod pt task2 neverificat
+            case 2:{
+
+            int nrEchipe, nrPlayeri;
+            fscanf(fisier_input, "%d", &nrEchipe);
+
+            struct Team* teamList=NULL;
+            int i, j;
+
+            for(i=0; i<nrEchipe; i++)
+            {
+                fscanf(fisier_input, "%d", &nrPlayeri);
+                char* numeEchipa=citireNumeEchipa(fisier_input);
+                int punctajTotal=0;
+                for(j=0; j<nrPlayeri; j++)
+                {
+                    char* firstName=citireSir(fisier_input);
+                    char* secondName=citireSir(fisier_input);
+                    int punctaj;
+                    fscanf(fisier_input, "%d", &punctaj);
+                    punctajTotal+=punctaj;
+                    free(firstName);
+                    free(secondName);
+                }
+                teamList=creazaEchipa(numeEchipa, punctajTotal, teamList);
+            }
+            int n=nrEchipe;
+            eliminaEchipa(&teamList, n);
+
+            struct Team* curent=teamList;
+            while(curent!=NULL)
+            {
+                fprintf(fisier_output, "%s %d \n", curent->name, curent->punctajTotal);
+                curent=curent->next;
+            }
+
+            fclose(fisier_input);
+            fclose(fisier_output);
+            fclose(verificare_task);
+            freeMem(teamList);
+
+            break;}
 
             case 3:
             printf("3");
