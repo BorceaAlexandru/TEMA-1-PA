@@ -1,31 +1,5 @@
 #include "librariamea.h"
 
-//aici scriu functiile
-
-/*void afisare(){
-    printf("ceva");
-}*/
-
-//functie care determina numarul taskului
-int determinTask(FILE* fisier)
-{
-    if(fisier==NULL)
-    {
-        puts("Eroare!");
-        exit(1);
-    }
-    int tasks[5], i;
-    for(i=0 ;i<5; i++)
-    {
-        if(fscanf(fisier,"%d", &tasks[i])!=1) return -1;
-    }
-
-    for(i=0; i<5; i++)
-        if(tasks[i]==1)
-            return i+1;
-
-    return -1;
-}
 
 //functie care citeste din d.in (cate un cuvant)
 char* citireSir(FILE* fisier)
@@ -59,15 +33,7 @@ char* citireNumeEchipa(FILE* fisier)
     return name;
 }
 
-//functie care creeaza echipa si o adauga la inceputul listei
-struct Team* creazaEchipa(char* name, struct Team* head)
-{
-    struct Team* newTeam=(struct Team*)malloc(sizeof (struct Team));
-    newTeam->name=name;
-    newTeam->next=head;
-    return newTeam;
-}
-
+//functie pentru eliberare de memorie
 void freeMem(struct Team* head)
 {
     while(head!=NULL)
@@ -79,9 +45,7 @@ void freeMem(struct Team* head)
     }
 }
 
-//functii pentru task2
-
-//creazaEchipa modificat
+//creeazaEchipa modificat + cu punctaj
 struct Team* creazaEchipa(char* name, int punctajTotal, struct Team* head)
 {
     struct Team* newTeam=(struct Team*)malloc(sizeof (struct Team));
@@ -98,10 +62,11 @@ int putereDoi(int n)
     return (n&(n-1))==0;
 }
 
+
 //elimina echipa
-void eliminaEchipa(struct Team** head, int n)
+void eliminaEchipa(struct Team** head, int numarEchipe)
 {
-    while(n<1 || (n & (n-1))!=0) //verific daca n e putere a lui 2
+    while((numarEchipe & (numarEchipe-1))!=0) //verific daca n e putere a lui 2
     {
         struct Team* cur=*head;
         struct Team* prev=NULL;
@@ -126,6 +91,63 @@ void eliminaEchipa(struct Team** head, int n)
 
         free(minTeam->name);
         free(minTeam);
-        n--;
+        numarEchipe--;
     }
+}
+
+
+
+//FUNCTII TASK
+
+void task1(FILE* fisier_input, FILE* fisier_output, struct Team** teamList, int numarEchipe, int* vectorTask)
+{
+    int nrPlayeri;
+
+    int i, j;
+    for(i=0; i<numarEchipe; i++)
+    {
+        fscanf(fisier_input, "%d", &nrPlayeri);
+        int punctajTotal=0;
+        char* numeEchipa=citireNumeEchipa(fisier_input);
+
+        
+
+        for(j=0; j<nrPlayeri; j++)
+        {
+            char* firstName=citireSir(fisier_input);
+            char* secondName=citireSir(fisier_input);
+            int points;
+            fscanf(fisier_input, "%d", &points);
+            punctajTotal+=points;
+
+            //eliberare
+            free(firstName);
+            free(secondName);
+        }
+
+        (*teamList)=creazaEchipa(numeEchipa, punctajTotal, *teamList);
+    }
+
+    if(vectorTask[0]==1 && (vectorTask[1]==0 && vectorTask[2]==0 && vectorTask[3]==0 && vectorTask[4]==0))
+    {
+    struct Team* curent=(*teamList);
+    while(curent!=NULL)
+    {
+        fprintf(fisier_output, "%s\n", curent->name);
+        curent=curent->next;
+    }
+    }
+}
+
+
+void task2(FILE* fisier_output, int numarEchipe, struct Team** teamList)
+{
+    eliminaEchipa(teamList, numarEchipe);
+
+    struct Team* curent=(*teamList);
+        while(curent!=NULL)
+            {
+                fprintf(fisier_output, "%s\n", curent->name);
+                curent=curent->next;
+            }
 }

@@ -1,10 +1,6 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include "librariamea.h"
 
 int main(int argc, char** argv){
-
-    //afisare();
 
     FILE* fisier_input=fopen(argv[2], "r");
     FILE* fisier_output=fopen(argv[3], "w");
@@ -22,153 +18,24 @@ int main(int argc, char** argv){
         exit(1);
     }
 
-    int task=determinTask(verificare_task);
-    if(task==-1)
-    {
-        puts("Nu s-a gasit taskul");
-        exit(1);
-    }
-    else{
-        printf("Se rezolva cazul:%d ", task);
-        switch(task){
-            case 1:{
-                int nrEchipe, nrPlayeri;
-    fscanf(fisier_input, "%d", &nrEchipe);
+    int numarEchipe;
+    fscanf(fisier_input, "%d", &numarEchipe);
 
     struct Team* teamList=NULL;
-    int i, j;
-    for(i=0; i<nrEchipe; i++)
-    {
-        fscanf(fisier_input, "%d", &nrPlayeri);
-        char* numeEchipa=citireNumeEchipa(fisier_input);
 
-        teamList=creazaEchipa(numeEchipa, teamList);
 
-        for(j=0; j<nrPlayeri; j++)
-        {
-            char* firstName=citireSir(fisier_input);
-            char* secondName=citireSir(fisier_input);
-            int points;
-            fscanf(fisier_input, "%d", &points);
+    int *vectorTask=(int*)malloc(5*sizeof(int));
+    for(int i=0; i<5; i++)
+        fscanf(verificare_task, "%d", &vectorTask[i]);
 
-            //eliberare
-            free(firstName);
-            free(secondName);
-        }
-    }
 
-    struct Team* curent=teamList;
-    while(curent!=NULL)
-    {
-        fprintf(fisier_output, "%s\n", curent->name);
-        curent=curent->next;
-    }
+    //int task=determinTask(verificare_task);
+
+    if(vectorTask[0]==1) task1(fisier_input, fisier_output, &teamList, numarEchipe, vectorTask);
+    if(vectorTask[1]==1) task2(fisier_output, numarEchipe, &teamList); 
 
     fclose(fisier_input);
     fclose(fisier_output);
     fclose(verificare_task);
-
-        break;}
-
-            //cod pt task2 neverificat
-            case 2:{
-
-            int nrEchipe, nrPlayeri;
-            fscanf(fisier_input, "%d", &nrEchipe);
-
-            struct Team* teamList=NULL;
-            int i, j;
-
-            for(i=0; i<nrEchipe; i++)
-            {
-                fscanf(fisier_input, "%d", &nrPlayeri);
-                char* numeEchipa=citireNumeEchipa(fisier_input);
-                int punctajTotal=0;
-                for(j=0; j<nrPlayeri; j++)
-                {
-                    char* firstName=citireSir(fisier_input);
-                    char* secondName=citireSir(fisier_input);
-                    int punctaj;
-                    fscanf(fisier_input, "%d", &punctaj);
-                    punctajTotal+=punctaj;
-                    free(firstName);
-                    free(secondName);
-                }
-                teamList=creazaEchipa(numeEchipa, punctajTotal, teamList);
-            }
-            int n=nrEchipe;
-            eliminaEchipa(&teamList, n);
-
-            struct Team* curent=teamList;
-            while(curent!=NULL)
-            {
-                fprintf(fisier_output, "%s %d \n", curent->name, curent->punctajTotal);
-                curent=curent->next;
-            }
-
-            fclose(fisier_input);
-            fclose(fisier_output);
-            fclose(verificare_task);
-            freeMem(teamList);
-
-            break;}
-
-            case 3:
-            printf("3");
-            break;
-
-            case 4:
-            printf("4");
-            break;
-
-            case 5:
-            printf("5");
-            break;
-
-            default:
-            printf("error");
-        }
-    }
-
-    //printf("%d", task);
-
-
-    /*
-    int nrEchipe, nrPlayeri;
-    fscanf(fisier_input, "%d", &nrEchipe);
-
-    struct Team* teamList=NULL;
-    int i, j;
-    for(i=0; i<nrEchipe; i++)
-    {
-        fscanf(fisier_input, "%d", &nrPlayeri);
-        char* numeEchipa=citireNumeEchipa(fisier_input);
-
-        teamList=creazaEchipa(numeEchipa, teamList);
-
-        for(j=0; j<nrPlayeri; j++)
-        {
-            char* firstName=citireSir(fisier_input);
-            char* secondName=citireSir(fisier_input);
-            int points;
-            fscanf(fisier_input, "%d", &points);
-
-            //eliberare
-            free(firstName);
-            free(secondName);
-        }
-    }
-
-    struct Team* curent=teamList;
-    while(curent!=NULL)
-    {
-        fprintf(fisier_output, "%s\n", curent->name);
-        curent=curent->next;
-    }
-
-    fclose(fisier_input);
-    fclose(fisier_output);
-    fclose(verificare_task);
-    */
     return 0;
 }
