@@ -50,6 +50,14 @@ struct Stiva
     struct Stiva_Nod* varf;
 };
 
+//structura pentru BST
+struct Arbore_Nod
+{
+    struct Team* team;
+    struct Arbore_Nod* dreapta;
+    struct Arbore_Nod* stanga;
+};
+
 //functii
 char* citireSir(FILE* fisier);
 char* citireNumeEchipa(FILE* fisier);
@@ -66,9 +74,13 @@ void push(struct Stiva *stiva, struct Team* team);
 void pop(struct Stiva* stiva);
 int stivaGoala(struct Stiva* stiva);
 struct Stiva_Nod varf(struct Stiva *stiva);
+void printare(FILE* fisier_output, struct Arbore_Nod* Arbore);
+struct Arbore_Nod* insert(struct Arbore_Nod* nod, struct Team* key);
+struct Arbore_Nod* Nod_nou(struct Team* team);
 
 
 //APELARE FUNCTII TASK
 void task1(FILE* fisier_in, FILE* fisier_out, struct Team** teamList, int numarEchipe, int* vectorTask);
 void task2(FILE* fisier_output, int numarEchipe, struct Team** teamList);
-void task3(FILE* fisier_output, struct Team** teamList);
+void task3(FILE* fisier_output, struct Team** teamList, struct Team** top8);
+void task4(FILE* fisier_output, struct Team* top8);

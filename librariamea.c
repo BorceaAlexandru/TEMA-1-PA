@@ -189,6 +189,44 @@ struct Stiva_Nod* top(struct Stiva *stiva)
     return stiva->varf;
 }
 
+//functie pentru a face un nod nou pentru arbore
+struct Arbore_Nod* Nod_nou(struct Team* team)
+{
+    struct Arbore_Nod* newNode=(struct Arbore_Nod*)malloc(sizeof(struct Arbore_Nod));
+    newNode->team=team;
+    newNode->stanga=newNode->dreapta=NULL;
+    return newNode;
+}
+
+//functie pentru inserare (BST)
+struct Arbore_Nod* insert(struct Arbore_Nod* nod, struct Team* key)
+{
+    if(nod==NULL) return Nod_nou(key);
+    if(key->punctajTotal < nod->team->punctajTotal)
+        nod->stanga=insert(nod->stanga, key);
+    else if(key->punctajTotal > nod->team->punctajTotal)
+            nod->dreapta=insert(nod->dreapta, key);
+    else
+    {
+        if(strcmp(key->name, nod->team->name)>0)
+            nod->dreapta=insert(nod->dreapta, key);
+        else
+            nod->stanga=insert(nod->stanga, key);
+    }
+    return nod;
+}
+
+//functie print task4
+void printare(FILE* fisier_output, struct Arbore_Nod* Arbore)
+{
+    if(Arbore)
+    {
+        printare(fisier_output, Arbore->dreapta);
+        fprintf(fisier_output, "%-34s-  %.2f\n", Arbore->team->name, Arbore->team->punctajTotal);
+        printare(fisier_output, Arbore->stanga);
+    }
+}
+
 
 //FUNCTII TASK
 
@@ -247,15 +285,13 @@ void task2(FILE* fisier_output, int numarEchipe, struct Team** teamList)
 }
 
 
-void task3(FILE* fisier_output, struct Team** teamList)
+void task3(FILE* fisier_output, struct Team** teamList, struct Team** top8)
 {
     struct Coada* meciuri=createQueue();
     struct Stiva* castigatori=createStack();
     struct Stiva* pierzatori=createStack();
 
     struct Team* curent=(*teamList);
-
-    
 
     //adaug echipe in struct meciuri
     while(curent!=NULL && curent->next!=NULL)
@@ -272,8 +308,6 @@ void task3(FILE* fisier_output, struct Team** teamList)
        fprintf(fisier_output, "\n--- ROUND NO:%d\n", round);    
        while(!coadaGoala(meciuri))
        {
-        
-        struct Coada_Nod* meci=front(meciuri);
         struct Team* team1=meciuri->fata->team1;
         struct Team* team2=meciuri->fata->team2;
     
@@ -318,73 +352,47 @@ void task3(FILE* fisier_output, struct Team** teamList)
             struct Team* team1=castigatori->varf->team;
             pop(castigatori);
             fprintf(fisier_output, "%-34s-  %.2f\n", team1->name, team1->punctajTotal);
+
+            if(k==8)
+            {
+                struct Team* temp1=(struct Team*)malloc(sizeof(struct Team));
+                temp1->name=(char*)malloc((strlen(team1->name)+1)*sizeof(char));
+                strcpy(temp1->name, team1->name);
+                temp1->punctajTotal=team1->punctajTotal;
+                temp1->next=(*top8);
+                (*top8)=temp1;
+            }
+
             if(k==1) break;
 
             struct Team* team2=castigatori->varf->team;
             pop(castigatori);
             fprintf(fisier_output, "%-34s-  %.2f\n", team2->name, team2->punctajTotal);
+
+            if(k==8)
+            {
+                struct Team* temp2=(struct Team*)malloc(sizeof(struct Team));
+                temp2->name=(char*)malloc((strlen(team2->name)+1)*sizeof(char));
+                strcpy(temp2->name, team2->name);
+                temp2->punctajTotal=team2->punctajTotal;
+                temp2->next=(*top8);
+                (*top8)=temp2;
+            }
+
             enqueue(meciuri, team1, team2);
         }
         round++;
     }
-
-    //return;
-
-    // printf("inaitne\n");
-
-    // curent=(*teamList);
-    // struct Team* top8=NULL;
-    // int cnt=0;
-    // while(curent!=NULL && cnt<8)
-    // {
-    //     struct Team* next=curent->next;
-    //     curent->next=top8;
-    //     top8=curent;
-    //     curent=next;
-    //     cnt++;
-    // }
-
-    // (*teamList)=top8;
-
-    // printf("dipa\n");
-
-    // //se continua meciurile pana se afla echipa castigatoare
-    // while(!coadaGoala(meciuri))
-    // {
-    //     struct Coada_Nod* meci=front(meciuri);
-    //     struct Team* team1=meciuri->fata->team1;
-    //     struct Team* team2=meciuri->fata->team2;
-    //     dequeue(meciuri);
-
-    //     //struct Team* team1=meci->team1;
-    //     //struct Team* team2=meci->team2;
-
-    //     if (team1->punctajTotal>=team2->punctajTotal) 
-    //     {
-    //         team1->punctajTotal+=1;
-    //         push(castigatori, team1);
-    //     } 
-    //     else 
-    //     {
-    //         team2->punctajTotal+=1;
-    //         push(castigatori, team2);
-    //     }
-
-    //     free(meci);
-    // }
-
-    // struct Team* castigatori_smecheri=top(castigatori)->team;
-    // fprintf(fisier_output, "%-34s-%.2f\n", castigatori_smecheri->name, castigatori_smecheri->punctajTotal);
-
-    // //freemem
-    // while(!stivaGoala(castigatori)) 
-    //     pop(castigatori);
-
-    // while (!stivaGoala(pierzatori))
-    //     pop(pierzatori);
-    
-    // free(castigatori);
-    // free(pierzatori);
-    // free(meciuri);
-
 }
+
+void task4(FILE* fisier_output, struct Team* top8)
+{
+    struct Arbore_Nod* BST=NULL;
+    for(struct Team* i=top8; i!=NULL; i=i->next)
+        BST=insert(BST, i);
+    
+    fprintf(fisier_output, "\nTOP 8 TEAMS:\n");
+
+    printare(fisier_output, BST);
+}
+
