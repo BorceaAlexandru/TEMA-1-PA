@@ -62,7 +62,6 @@ struct Arbore_Nod
 char* citireSir(FILE* fisier);
 char* citireNumeEchipa(FILE* fisier);
 struct Team* creazaEchipa(char* name, float punctaj, struct Team* head);
-void freeMem(struct Team* head);
 void eliminaEchipa(struct Team** head, int n);
 struct Coada* createQueue();
 void enqueue(struct Coada *coada, struct Team* team1, struct Team* team2);

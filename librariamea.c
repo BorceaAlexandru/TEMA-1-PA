@@ -43,18 +43,6 @@ char* citireNumeEchipa(FILE* fisier)
     return name;
 }
 
-//functie pentru eliberare de memorie
-void freeMem(struct Team* head)
-{
-    while(head!=NULL)
-    {
-        struct Team* aux=head;
-        head=head->next;
-        free(aux->name); //eliberez mem pt numele echipei
-        free(aux); //eliberez mem pt struct echipei
-    }
-}
-
 //creeazaEchipa modificat + cu punctaj
 struct Team* creazaEchipa(char* name, float punctajTotal, struct Team* head)
 {
@@ -143,12 +131,6 @@ int coadaGoala(struct Coada* coada)
     return coada->fata==NULL;
 }
 
-//functie pentru acces la primul element din coada
-struct Coada_Nod* front(struct Coada* coada)
-{
-    return coada->fata;
-}
-
 //functii pentru stiva
 
 //functie createStack
@@ -174,19 +156,12 @@ void pop(struct Stiva* stiva)
     if(stiva->varf==NULL) return;
     struct Stiva_Nod *newNode=stiva->varf;
     stiva->varf=stiva->varf->next;
-    //free(newNode);
 }
 
 //functie verific stiva goala
 int stivaGoala(struct Stiva *stiva)
 {
     return stiva->varf==NULL;
-}
-
-//functie pt acces la elementul din varful stivei
-struct Stiva_Nod* top(struct Stiva *stiva)
-{
-    return stiva->varf;
 }
 
 //functie pentru a face un nod nou pentru arbore
@@ -335,15 +310,6 @@ void task3(FILE* fisier_output, struct Team** teamList, struct Team** top8)
 
        } 
 
-        //eliberare memorie echipe pierzatoare
-        while(!stivaGoala(pierzatori))
-        {
-            struct Team* PIERZATORII=top(pierzatori)->team;
-            pop(pierzatori);
-            free(PIERZATORII->name);
-            free(PIERZATORII);
-        }
-
         fprintf(fisier_output, "\nWINNERS OF ROUND NO:%d\n", round);
 
         //bag castigatorii inapoi in coada de meciuri
@@ -394,5 +360,6 @@ void task4(FILE* fisier_output, struct Team* top8)
     fprintf(fisier_output, "\nTOP 8 TEAMS:\n");
 
     printare(fisier_output, BST);
+
 }
 
